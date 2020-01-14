@@ -3,6 +3,7 @@ import java.lang.*;
 import s4.specification.*;
 
 
+
 /*package s4.specification;
   ここは、１回、２回と変更のない外部仕様である。
   public interface FrequencerInterface {     // This interface provides the design for frequency counter.
@@ -69,7 +70,7 @@ public class Frequencer implements FrequencerInterface{
 		String stri = new String(mySpace).substring(i);
 		String strj = new String(mySpace).substring(j);
 		int ret = stri.compareTo(strj);
-		
+
 		if (ret < 0) return -1;
 		else if (ret > 0) return 1;
 		else return 0;
@@ -156,6 +157,21 @@ public class Frequencer implements FrequencerInterface{
 		//
 		// ここに比較のコードを書け
 		//
+    int length=Math.min(mySpace.length-i,k-j);
+
+    if(mySpace.length-i<k-j+1){
+      return -1;
+    }
+
+    for(int x=0;x<length;x++){
+      int diff=mySpace[x+i]-myTarget[x+j];
+      if(diff>0){
+        return 1;
+      }else if(diff<0){
+        return -1;
+      }
+    }
+
 		return 0; // この行は変更しなければならない。
 	}
 
@@ -186,6 +202,12 @@ public class Frequencer implements FrequencerInterface{
 		//
 		// ここにコードを記述せよ。
 		//
+    for(int x=0;x<suffixArray.length;x++){
+      if(targetCompare(suffixArray[x],start,end)==0){
+        return x;
+      }
+    }
+
 		return suffixArray.length; //このコードは変更しなければならない。
 	}
 
@@ -214,6 +236,15 @@ public class Frequencer implements FrequencerInterface{
 		//
 		//　ここにコードを記述せよ
 		//
+    boolean found=false;
+    for(int x=0;x<suffixArray.length;x++){
+      if(targetCompare(suffixArray[x],start,end)==0){
+        found=true;
+      }
+      if(targetCompare(suffixArray[x],start,end)!=0&&found){
+        return x;
+      }
+    }
 		return suffixArray.length; // この行は変更しなければならない、
 	}
 
@@ -231,9 +262,7 @@ public class Frequencer implements FrequencerInterface{
 	public static void main(String[] args) {
 		Frequencer frequencerObject;
 		try {
-            frequencerObject = new Frequencer();
-        	frequencerObject.mySpace = "Hi Ho Hi Ho".getBytes();
-        	System.out.println(frequencerObject.suffixCompare(0, 0));
+      frequencerObject = new Frequencer();
 			frequencerObject = new Frequencer();
 			frequencerObject.setSpace("Hi Ho Hi Ho".getBytes());
 			frequencerObject.printSuffixArray(); // you may use this line for DEBUG
@@ -251,7 +280,7 @@ public class Frequencer implements FrequencerInterface{
                A:o Hi Ho
             */
 
-			frequencerObject.setTarget("H".getBytes());
+			frequencerObject.setTarget("Hi".getBytes());
 			//
 			// ****  Please write code to check subByteStartIndex, and subByteEndIndex
 			//
@@ -261,8 +290,8 @@ public class Frequencer implements FrequencerInterface{
 			if(4 == result) { System.out.println("OK"); } else {System.out.println("WRONG"); }
 		}
 		catch(Exception e) {
+      e.printStackTrace();
 			System.out.println("STOP");
 		}
 	}
 }
-
