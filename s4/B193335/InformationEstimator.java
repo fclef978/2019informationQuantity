@@ -35,7 +35,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
     }
 
     // IQ: information quantity for a count,  -log2(count/sizeof(space))
-    double iq(int freq) {
+    double iqExp(int freq) {
         return -Math.log10((double) freq / (double) mySpace.length) / Math.log10((double) 2.0);
     }
 
@@ -49,7 +49,27 @@ public class InformationEstimator implements InformationEstimatorInterface {
         myFrequencer.setSpace(space);
     }
 
+    double f(int start, int end) {
+        int freq = myFrequencer.subByteFrequency(start, end);
+        return -Math.log10((double) freq / (double) mySpace.length) / Math.log10((double) 2.0);
+    }
+
     public double estimation() {
+        myFrequencer.setTarget(myTarget);
+        double[] saveArray = new double[myTarget.length + 1];
+        saveArray[0] = 0.0;
+        for (int i = 1; i <= myTarget.length; i++) {
+            double min = Double.MAX_VALUE;
+            for (int j = 0; j < i; j++) {
+                double tmp = saveArray[j] + f(j, i);
+                if (min > tmp) min = tmp;
+            }
+            saveArray[i] = min;
+        }
+        return saveArray[saveArray.length - 1];
+    }
+
+    public double estimationExp() {
         boolean[] partition = new boolean[myTarget.length + 1];
         int np;
         np = 1 << (myTarget.length - 1);
@@ -83,7 +103,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
                 }
                 // System.out.print("("+start+","+end+")");
                 myFrequencer.setTarget(subBytes(myTarget, start, end));
-                value1 = value1 + iq(myFrequencer.frequency());
+                value1 = value1 + iqExp(myFrequencer.frequency());
                 start = end;
             }
             // System.out.println(" "+ value1);
@@ -100,6 +120,18 @@ public class InformationEstimator implements InformationEstimatorInterface {
         myObject = new InformationEstimator();
         myObject.setSpace("3210321001230123".getBytes());
         myObject.setTarget("0".getBytes());
+        System.out.println(">0 " + (myObject.estimation() - myObject.estimationExp()));
+        myObject.setTarget("01".getBytes());
+        System.out.println(">01 " + (myObject.estimation() - myObject.estimationExp()));
+        myObject.setTarget("012".getBytes());
+        System.out.println(">012 " + (myObject.estimation() - myObject.estimationExp()));
+        myObject.setTarget("0123".getBytes());
+        System.out.println(">0123 " + (myObject.estimation() - myObject.estimationExp()));
+        myObject.setTarget("01230123".getBytes());
+        System.out.println(">01230123 " + (myObject.estimation() - myObject.estimationExp()));
+        myObject.setTarget("00".getBytes());
+        System.out.println(">00 " + (myObject.estimation() - myObject.estimationExp()));
+        /*
         value = myObject.estimation();
         System.out.println(">0 " + value);
         myObject.setTarget("01".getBytes());
@@ -111,6 +143,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
         myObject.setTarget("00".getBytes());
         value = myObject.estimation();
         System.out.println(">00 " + value);
+        */
     }
 }
 				  
