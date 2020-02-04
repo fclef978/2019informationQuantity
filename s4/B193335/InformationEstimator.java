@@ -1,6 +1,8 @@
 package s4.B193335; // Please modify to s4.Bnnnnnn, where nnnnnn is your student ID. 
 
 import java.lang.*;
+import java.util.*;
+import java.util.stream.*;
 
 import s4.specification.*;
 
@@ -58,6 +60,10 @@ public class InformationEstimator implements InformationEstimatorInterface {
         myFrequencer.setTarget(myTarget);
         double[] saveArray = new double[myTarget.length + 1];
         saveArray[0] = 0.0;
+        IntStream.range(1, myTarget.length + 1).forEach((i) ->
+            saveArray[i] = IntStream.range(0, i).mapToDouble((j) -> saveArray[j] + f(j, i)).min().orElse(Double.MAX_VALUE)
+        );
+            /*
         for (int i = 1; i <= myTarget.length; i++) {
             double min = Double.MAX_VALUE;
             for (int j = 0; j < i; j++) {
@@ -66,6 +72,7 @@ public class InformationEstimator implements InformationEstimatorInterface {
             }
             saveArray[i] = min;
         }
+            */
         return saveArray[saveArray.length - 1];
     }
 
