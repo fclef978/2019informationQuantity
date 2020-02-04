@@ -57,6 +57,9 @@ public class InformationEstimator implements InformationEstimatorInterface {
     }
 
     public double estimation() {
+        if (mySpace == null || mySpace.length <= 0) return Double.MAX_VALUE;
+        if (myTarget == null || myTarget.length <= 0) return 0.0;
+
         myFrequencer.setTarget(myTarget);
         double[] saveArray = new double[myTarget.length + 1];
         saveArray[0] = 0.0;
